@@ -12,7 +12,7 @@ pub static mut GLOBAL_MODIFIERS: (bool, bool, bool) = (false, false, false);
 /// Handler for on_key events from the browser. Sets the global variables, which are then
 /// referenced by the main loop.
 pub fn on_key(key: web_sys::KeyboardEvent) {
-    let mut input = INPUT.lock();
+use crate::prelude::log;
     let k = key.key();
     let mut only_one = false;
     for _c in k.chars() {
