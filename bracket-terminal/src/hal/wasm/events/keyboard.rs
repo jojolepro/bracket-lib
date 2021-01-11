@@ -13,9 +13,22 @@ pub static mut GLOBAL_MODIFIERS: (bool, bool, bool) = (false, false, false);
 /// referenced by the main loop.
 pub fn on_key(key: web_sys::KeyboardEvent) {
     let mut input = INPUT.lock();
-    input.push_event(BEvent::Character {
-        c: std::char::from_u32(key.char_code()).unwrap(),
-    });
+    let k = key.key();
+    let mut only_one = false;
+    for _c in k.chars() {
+        if !only_one {
+            only_one = true;
+        } else {
+            only_one = false;
+            break;
+        }
+    }
+    if only_one {
+        input.push_event(BEvent::Character {
+            //c: std::char::from_u32(key.char_code()).unwrap(),
+            c: k.chars().next().unwrap(),
+        });
+    }
     let scan_code = key.key_code();
     if let Some(key) = virtual_key_code(&key) {
         unsafe {
@@ -39,9 +52,9 @@ pub fn on_key(key: web_sys::KeyboardEvent) {
 
 pub fn on_key_up(key: web_sys::KeyboardEvent) {
     let mut input = INPUT.lock();
-    input.push_event(BEvent::Character {
+    /*input.push_event(BEvent::Character {
         c: std::char::from_u32(key.char_code()).unwrap(),
-    });
+    });*/
     let scan_code = key.key_code();
     if let Some(key) = virtual_key_code(&key) {
         input.on_key_up(key, scan_code);
