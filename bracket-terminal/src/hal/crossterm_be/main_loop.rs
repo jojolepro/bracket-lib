@@ -89,6 +89,9 @@ pub fn main_loop<GS: GameState>(mut bterm: BTerm, mut gamestate: GS) -> Result<(
                     keys_this_frame.insert(key.code);
                     if !key_map.contains(&key.code) {
                         key_map.insert(key.code);
+                        if let crossterm::event::KeyCode::Char(c) = key.code {
+                            bterm.on_event(BEvent::Character { c });
+                        }
                         if let Some(key) = keycode_to_key(key.code) {
                             bterm.on_key(key, virtual_key_code_to_scan(key), true);
                             // How do I get the scancode?
