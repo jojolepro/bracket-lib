@@ -4,7 +4,7 @@ use crate::prelude::{BEvent, INPUT};
 /// Provides a global variable for keyboard events to be written to. I'm not really
 /// a fan of using globals, but it was hard to find an alternative given the separation
 /// between the web-side and the wasm side.
-pub static mut GLOBAL_KEY: Option<VirtualKeyCode> = None;
+pub static mut GLOBAL_KEY: Option<char> = None;
 
 /// Global for handling modifier key-state.
 pub static mut GLOBAL_MODIFIERS: (bool, bool, bool) = (false, false, false);
@@ -12,7 +12,6 @@ pub static mut GLOBAL_MODIFIERS: (bool, bool, bool) = (false, false, false);
 /// Handler for on_key events from the browser. Sets the global variables, which are then
 /// referenced by the main loop.
 pub fn on_key(key: web_sys::KeyboardEvent) {
-use crate::prelude::log;
     let k = key.key();
     let mut only_one = false;
     for _c in k.chars() {
@@ -24,18 +23,20 @@ use crate::prelude::log;
         }
     }
     if only_one {
-        input.push_event(BEvent::Character {
+        /*input.push_event(BEvent::Character {
             //c: std::char::from_u32(key.char_code()).unwrap(),
             c: k.chars().next().unwrap(),
-        });
+        });*/
+
+        unsafe{GLOBAL_KEY = Some(k.chars().next().unwrap());}
     }
-    let scan_code = key.key_code();
+    /*let scan_code = key.key_code();
     if let Some(key) = virtual_key_code(&key) {
         unsafe {
             GLOBAL_KEY = Some(key);
         }
         input.on_key_down(key, scan_code);
-    }
+    }*/
 
     unsafe {
         if key.get_modifier_state("Shift") {

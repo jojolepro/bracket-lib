@@ -1,7 +1,7 @@
 use super::events::*;
 use super::*;
 use crate::hal::*;
-use crate::prelude::{BTerm, GameState, BACKEND_INTERNAL};
+use crate::prelude::{BTerm, BEvent, GameState, BACKEND_INTERNAL};
 use crate::{clear_input_state, Result};
 use glow::HasContext;
 
@@ -34,7 +34,10 @@ pub fn main_loop<GS: GameState>(mut bterm: BTerm, mut gamestate: GS) -> Result<(
     render_loop.run(move |_running: &mut bool| {
         // Read in event results
         unsafe {
-            bterm.key = GLOBAL_KEY;
+            if let Some(c) = GLOBAL_KEY {
+                bterm.on_event(BEvent::Character {c});
+            }
+            //bterm.key = GLOBAL_KEY;
             bterm.mouse_pos = (GLOBAL_MOUSE_POS.0, GLOBAL_MOUSE_POS.1);
             bterm.left_click = GLOBAL_LEFT_CLICK;
             bterm.shift = GLOBAL_MODIFIERS.0;
